@@ -17,19 +17,21 @@ namespace :ivy do
 		ant.path :id => 'ivy.lib.path' do
 			fileset :dir => ivy_jar_dir, :includes => '*.jar'
 		end
-
-		print "\n\nin install\n\n"
-
-		ant.taskdef :resource => "org/apache/ivy/ant/antlib.xml",
-      #:uri => "antlib:org.apache.ivy.ant",
-      :classpathref => "ivy.lib.path"
+		ant.taskdef :resource => "org/apache/ivy/ant/antlib.xml", :classpathref => "ivy.lib.path"
   end
+
+	task :configure => :install do
+#		ant.properties.each { |key,value| print key+" : "+value+"\n" }
+		ant.property :name=>"ivy.settings.dir", :value=>"./"
+		ant.configure :file=> "${ivy.settings.dir}/ivysettings.xml"
+	end
+
 end
 
 SOURCE_DIR="src/main/java"
 CLASSES_DIR="build"
 
-task :setup => "ivy:install" do
+task :setup => "ivy:configure" do
 	ant.retrieve
 end
 
@@ -52,7 +54,7 @@ task :package => :compile do
 	ant.jar :destfile=>"test.jar",:basedir=>CLASSES_DIR
 end
 
-task :run => :package do
+task :run => :compile do
 
 	ant.path :id=> "classes" do
 		ant.cachepath :pathid=>"ivy.build.classpath"
@@ -62,4 +64,9 @@ task :run => :package do
 
 	ant.java :classpathref=>"classes", :classname=>"au.org.aurin.test.async.Ping"
 
+end
+
+
+task :test => :compile do
+	
 end

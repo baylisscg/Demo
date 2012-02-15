@@ -4,16 +4,16 @@
 
 package au.org.aurin.test.async;
 
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
+import org.jboss.resteasy.plugins.server.tjws.TJWSEmbeddedJaxrsServer;
 import au.org.aurin.test.async.PingPongService;
 
 public class Ping {
 
   protected Ping() throws Exception {
-    JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-    sf.setResourceClasses(PingPongService.class);
-    sf.setAddress("http://localhost:8081/");    
-    sf.create();
+    TJWSEmbeddedJaxrsServer tjws = new TJWSEmbeddedJaxrsServer();
+    tjws.setPort(8080);
+    tjws.getDeployment().getActualResourceClasses().add(PingPongService.class);
+    tjws.start();
   }
 
   /**
