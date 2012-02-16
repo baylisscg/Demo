@@ -31,13 +31,10 @@ end
 SOURCE_DIR="src/main/java"
 CLASSES_DIR="build"
 
-task :setup => "ivy:configure" do
-	ant.retrieve
-end
+task :compile => "ivy:configure" do
 
-task :compile => :setup do
-
-	ant.cachepath :pathid=>"ivy.build.classpath"
+	ant.retrieve :conf=>"core"
+	ant.cachepath :pathid=>"ivy.build.classpath", :conf=>"core"
 
   ant.mkdir :dir => CLASSES_DIR
   ant.javac( :srcdir => SOURCE_DIR,
@@ -57,7 +54,7 @@ end
 task :run => :compile do
 
 	ant.path :id=> "classes" do
-		ant.cachepath :pathid=>"ivy.build.classpath"
+		ant.cachepath :pathid=>"ivy.build.classpath", :conf=>"runtime"
 		path :refid=>"ivy.build.classpath"
 		pathelement :location => CLASSES_DIR
 	end
@@ -66,7 +63,23 @@ task :run => :compile do
 
 end
 
+namespace :jbehave do
 
-task :test => :compile do
-	
+	task :install => "ivy:configure" do
+		ant.retrieve :conf=>"test"
+		ant.cachepath :pathid=>"ivy.test.classpath", :conf=>"test"
+		ant.taskdef :name=>"runStoriesAsEmbeddables", :classpathref => "ivy.test.classpath", :classname=>"org.jbehave.ant.RunStoriesAsEmbeddables"
+	end
+
+end
+
+
+task :test => [:compile,"jbehave:install"] do
+	ant.cachepath :pathid=>"ivy.test.classpath", :conf=>"test"
+	ant.runStoriesAsEmbeddables :includes=>"**/*Stories.java",
+	      :metaFilters=>"+author *,-skip",
+	      :systemProperties=>"java.awt.headless=true",
+	      :ignoreFailureInStories=>"true",
+        :ignoreFailureInView=>"false",
+        :generateViewAfterStories=>"true"
 end

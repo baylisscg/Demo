@@ -6,18 +6,30 @@
   <info organisation="au.org.aurin"
         module="test-project"/>
 
+  <configurations>
+    <conf name="core" description="Modules required by everything."/>
+    <conf name="test" extends="core" description="Required to test."/>
+    <conf name="runtime" extends="core" description="Required to run embedded server."/>
+  </configurations>
+
+  <publications>
+    	<artifact name="pingpongservice" type="jar"  conf="core" ext="jar"/>
+  </publications>
+
   <dependencies>
-    <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1"/>
-    <dependency org="javax.ws.rs" name="jsr311-api" rev="1.1.1"/>
+    <dependency org="javax.servlet" name="javax.servlet-api" rev="3.0.1" conf="core->*"/>
+    <dependency org="javax.ws.rs" name="jsr311-api" rev="1.1.1"  conf="core->*"/>
 
     <!-- JBoss RESTeasy -->
-    <dependency org="org.jboss.resteasy" name="resteasy-jaxrs" rev="2.3.1.GA"/>
-    <dependency org="org.jboss.resteasy" name="async-http-servlet-3.0" rev="2.3.1.GA"/>
-    <dependency org="org.jboss.resteasy" name="tjws" rev="2.3.1.GA"/> <!-- Embedded server -->
+    <dependency org="org.jboss.resteasy" name="resteasy-jaxrs" rev="2.3.1.GA" conf="core->*"/>
+    <dependency org="org.jboss.resteasy" name="async-http-servlet-3.0" rev="2.3.1.GA" conf="core->*"/>
+
+    <dependency org="org.jboss.resteasy" name="tjws" rev="2.3.1.GA" conf="runtime->*"/> <!-- Embedded server -->
 
     <!-- Test -->
-    <dependency org="org.jbehave" name="jbehave-core" rev="3.5.4" />
-    <dependency org="org.mockito" name="mockito-core" rev="1.9.0" />
+    <dependency org="org.jbehave" name="jbehave-core" rev="3.5.4" conf="test->*" />
+    <dependency org="org.jbehave" name="jbehave-ant"  rev="3.5.4" conf="test->*" />
+    <dependency org="org.mockito" name="mockito-core" rev="1.9.0" conf="test->*" />
   </dependencies>
 
 </ivy-module>
