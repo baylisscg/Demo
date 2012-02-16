@@ -43,7 +43,7 @@ $ cd Demo
 $ rake run
 ```
 
-You should then be able to access the test service at (loclahost:8080/ping)[http://localhost:8080/ping].
+You should then be able to access the test service at [localhost:8080/ping](http://localhost:8080/ping).
 
 Other `rake` commands include:
  * `rake compile` - Build the code.
